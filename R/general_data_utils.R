@@ -673,7 +673,7 @@ Read.RHistoryFile <- function(filePath){
   # as first and second arguments after (
 
   # Define a regex pattern to match InitDataObjects function and its arguments
-  pattern <- "InitDataObjects\\(([^,]+),\\s*([^,]+)"
+  pattern <- "InitDataObjects\\(([^,]+),\\s*([^,]+),\\s*([^\\)]+)"
   
   # Loop through the file content to find the first match
   for (line in file_content) {
@@ -682,7 +682,7 @@ Read.RHistoryFile <- function(filePath){
       match <- regmatches(line, regexec(pattern, line))
       if (length(match[[1]]) >= 3) {
         # Return the first two arguments as a vector
-        return(c(trimws(match[[1]][2]), trimws(match[[1]][3])))
+        return(c(trimws(match[[1]][2]), trimws(match[[1]][3]), trimws(match[[1]][4])))
       }
     }
   }
