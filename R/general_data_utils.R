@@ -652,6 +652,46 @@ Read.PeakList<-function(mSetObj=NA, foldername="upload"){
   }
 }
 
+
+#'Read RHistory File
+#'@description This function reads an RHistory file and fills some metadata into a dataSet object.  
+#'The file should contain a series of commands all coming from previous MetaboAnalyst sessions
+#'@usage Read.RHistoryFile(mSetObj=NA, filePath)
+#'@param mSetObj Input the name of the created mSetObj (see InitDataObjects).
+#'@param filePath Input the path name for the RHisotry file to read.
+#'@author Anna Domenech \email{adomenechcr@uoc.edu}
+#'Universitat Oberta de Barcelona
+#'License: GNU GPL (>= 2)
+#'@export
+Read.RHistoryFile <- function(filePath){
+
+  # Read the file as a text file
+  file_content <- readLines(con <- file(filePath), warn = FALSE)
+  
+  # One of the first lines should be the initObject
+  # this will give us the info that we need data.type and anal.type
+  # as first and second arguments after (
+
+  # Define a regex pattern to match InitDataObjects function and its arguments
+  pattern <- "InitDataObjects\\(([^,]+),\\s*([^,]+)"
+  
+  # Loop through the file content to find the first match
+  for (line in file_content) {
+    if (grepl(pattern, line)) {
+      # Extract the first two arguments using regex
+      match <- regmatches(line, regexec(pattern, line))
+      if (length(match[[1]]) >= 3) {
+        # Return the first two arguments as a vector
+        return(c(trimws(match[[1]][2]), trimws(match[[1]][3])))
+      }
+    }
+  }
+  
+  # Return NULL if no match is found
+  return(NULL)
+}
+
+
 #' Adds an error message
 #'@description The error message will be printed in all cases.
 #'Used in higher functions. 
