@@ -669,11 +669,31 @@ Read.RHistoryFile <- function(filePath){
   file_content <- readLines(con <- file(filePath), warn = FALSE)
   
   # One of the first lines should be the initObject
-  # this will give us the info that we need data.type and anal.type
-  # as first and second arguments after (
+  # this will give us the info that we need data.type, anal.type and "paired" flag
+  # as first, second and third arguments after (
 
   # Define a regex pattern to match InitDataObjects function and its arguments
   pattern <- "InitDataObjects\\(([^,]+),\\s*([^,]+),\\s*([^\\)]+)"
+
+  # Also, need to find what kind of data format we are dealing with, this is typically
+  # set when the data is read. There are four types of data format
+  data_format <- c("rowu", "rowp", "colu", "colp")
+
+  found_dataformat <- NULL
+
+  # Don't know the pattern for the line where we need to find the data formats, so
+  # we need to loop through the file
+  for (line in file_content) {
+    for (format in data_format) {
+      # if we find the data format in the line
+      if (grepl(format, line)) {
+        # set it in a variable
+        found_dataformat <- format
+        # break the loop as we don't need to look forward
+        break
+      }
+    }
+  }
   
   # Loop through the file content to find the first match
   for (line in file_content) {
@@ -681,8 +701,8 @@ Read.RHistoryFile <- function(filePath){
       # Extract the first two arguments using regex
       match <- regmatches(line, regexec(pattern, line))
       if (length(match[[1]]) >= 3) {
-        # Return the first two arguments as a vector
-        return(c(trimws(match[[1]][2]), trimws(match[[1]][3]), trimws(match[[1]][4])))
+        # Return the arguments as a vector and the data format
+        return(c(trimws(match[[1]][2]), trimws(match[[1]][3]), trimws(match[[1]][4]), found_dataformat))
       }
     }
   }
