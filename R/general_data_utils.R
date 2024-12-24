@@ -679,7 +679,11 @@ Read.RHistoryFile <- function(filePath){
   # set when the data is read. There are four types of data format
   data_format <- c("rowu", "rowp", "colu", "colp")
 
+  # Set Everything we are going to return to NULL
   found_dataformat <- NULL
+  dataType <- NULL
+  analType <- NULL
+  dataFormat <- NULL
 
   # Don't know the pattern for the line where we need to find the data formats, so
   # we need to loop through the file
@@ -702,13 +706,24 @@ Read.RHistoryFile <- function(filePath){
       match <- regmatches(line, regexec(pattern, line))
       if (length(match[[1]]) >= 3) {
         # Return the arguments as a vector and the data format
-        return(c(trimws(match[[1]][2]), trimws(match[[1]][3]), trimws(match[[1]][4]), found_dataformat))
+        tryCatch({
+          dataType = trimws(match[[1]][2])
+          analType = trimws(match[[1]][3])
+          dataFormat = trimws(match[[1]][4])
+        }, error = function(e) {
+          return(NULL)
+          break
+        })
+        
+        break
       }
     }
   }
-  
-  # Return NULL if no match is found
-  return(NULL)
+
+  # Combine all lines into a single string
+  file_string <- paste(file_content, collapse = "\n")
+
+  return(c(dataType, analType, dataFormat, found_dataformat, file_string))
 }
 
 
@@ -1213,3 +1228,25 @@ GetNMDRStudy <- function(mSetObj=NA, StudyID){
 }
 
 
+
+RunConfigAnalysis <- function(command){
+
+  # because the data has already been read, 
+  # Should not execute lines that contain Init or Read.
+  if (!(grepl("Read.|Init", command))) {
+    # Then need to make sure line is not empty or a comment
+    if (trimws(command) != "" && !startsWith(trimws(command), "#")) {
+      # need to replace the mSet to NA to use the current mSet
+      command <- gsub("mSet", "NA", command)
+      tryCatch({
+        eval(parse(text = command))
+        print(paste0("Executed: ", command))
+      }, error = function(e) {
+        print(paste0("Error in line: ", command, ". Message: ", e$message))
+      })
+    }
+
+  }
+
+  return(TRUE)
+}
