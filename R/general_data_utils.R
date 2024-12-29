@@ -1227,7 +1227,14 @@ GetNMDRStudy <- function(mSetObj=NA, StudyID){
 }
 
 
-
+#'Function to run a command comming from an R History file
+#'@description This function runs a command comming from an R History file
+#' some logic is applied to not run certain commands to be known to have run beforehand
+#' such as initobject, reads and unzips; as well as others that will be ran after 
+#' like savetransformdata
+#'@usage RunConfigAnalysis(command)
+#'@param RunConfigAnalysis Command in a string form to be ran
+#'@export
 RunConfigAnalysis <- function(command){
 
   # check if it's a Read.PeakList command
