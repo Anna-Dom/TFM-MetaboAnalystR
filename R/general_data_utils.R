@@ -680,10 +680,10 @@ Read.RHistoryFile <- function(filePath){
   data_format <- c("rowu", "rowp", "colu", "colp")
 
   # Set Everything we are going to return to NULL
-  found_dataformat <- NULL
-  dataType <- NULL
-  analType <- NULL
-  dataFormat <- NULL
+  found_dataformat <- "none"
+  dataType <- "none"
+  analType <- "none"
+  dataFormat <- "none"
 
   # Don't know the pattern for the line where we need to find the data formats, so
   # we need to loop through the file
@@ -711,7 +711,6 @@ Read.RHistoryFile <- function(filePath){
           analType = trimws(match[[1]][3])
           dataFormat = trimws(match[[1]][4])
         }, error = function(e) {
-          return(NULL)
           break
         })
         
@@ -1231,13 +1230,29 @@ GetNMDRStudy <- function(mSetObj=NA, StudyID){
 
 RunConfigAnalysis <- function(command){
 
-  # because the data has already been read, 
+  # check if it's a Read.PeakList command
+  # if we are in a read statement
+  if (grepl("Read.", command)) {
+    # # if this read statement contains PeakList we have to execute it
+    # if (grepl("PeakList", command)) {
+    #   execute <- TRUE
+    # } else {
+    #   execute <- FALSE
+    # }
+    execute <- FALSE
+  # if the line contain unzip or init, we don't execute
+  } else if (grepl("Unzip|Init|SaveTransformedData", command)) {
+    execute <- FALSE
+  } else {
+    execute <- TRUE
+  }
+
+  # because the data has already been unzipped, 
   # Should not execute lines that contain Init or Read.
-  if (!(grepl("Read.|Init", command))) {
+  if (execute) {
+    
     # Then need to make sure line is not empty or a comment
     if (trimws(command) != "" && !startsWith(trimws(command), "#")) {
-      # need to replace the mSet to NA to use the current mSet
-      command <- gsub("mSet", "NA", command)
       tryCatch({
         eval(parse(text = command))
         print(paste0("Executed: ", command))
@@ -1248,5 +1263,5 @@ RunConfigAnalysis <- function(command){
 
   }
 
-  return(TRUE)
+  return(execute)
 }
