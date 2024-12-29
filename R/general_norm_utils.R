@@ -515,6 +515,9 @@ PlotSampleNormSummary <- function(mSetObj=NA, imgName, format="png", dpi=72, wid
 #'Update data for filtering
 #'@description Function to update the mSetObj after removing features or samples.
 #'@param mSetObj Input the name of the created mSetObj (see InitDataObjects)
+#'@param feature.nm.vec Vector of features to be updated 
+#'@param smpl.nm.vec Vector of samples to be updated
+#'@param grp.nm.vec vector of groups to be retained
 #'@export
 # note: feature.nm.vec, smpl.nm.vec, grp.nm.vec all set up
 UpdateData <- function(mSetObj=NA, order.group = FALSE, feature.nm.vec, smpl.nm.vec, grp.nm.vec){
