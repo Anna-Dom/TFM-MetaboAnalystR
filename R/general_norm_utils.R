@@ -517,7 +517,7 @@ PlotSampleNormSummary <- function(mSetObj=NA, imgName, format="png", dpi=72, wid
 #'@param mSetObj Input the name of the created mSetObj (see InitDataObjects)
 #'@export
 # note: feature.nm.vec, smpl.nm.vec, grp.nm.vec all set up
-UpdateData <- function(mSetObj=NA, order.group = FALSE){
+UpdateData <- function(mSetObj=NA, order.group = FALSE, feature.nm.vec, smpl.nm.vec, grp.nm.vec){
   mSetObj <- .get.mSet(mSetObj);
 save.image("All_UpdateData_env.RData")
 save(mSetObj,order.group, file = "mSetObj__UpdateData0.rda")
