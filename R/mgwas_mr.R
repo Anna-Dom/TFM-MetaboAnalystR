@@ -263,7 +263,7 @@ PlotScatter <- function(mSetObj = NA, exposure, imgName, format = "png", dpi = 7
   mSetObj$imgSet$current.img <- imgName
   
   plot <- .mr_scatterPlot(mr.res, mr.dat, exposure)
-  Cairo::Cairo(file = imgName, unit = "in", dpi = dpi, width = w, height = h, type = format, bg = "white")
+  Cairo::Cairo(file = imgName, units = "in", dpi = dpi, width = w, height = h, type = format, bg = "white")
   print(plot)
   dev.off()
   
@@ -342,7 +342,7 @@ PlotForest <- function(mSetObj = NA, exposure, imgName, format = "png", dpi = 72
   mSetObj$imgSet$current.img <- imgName
   
   plot <- .mr_forestPlot(mr.res_single, exposure)
-  Cairo::Cairo(file = imgName, unit = "in", dpi = dpi, width = w, height = h, type = format, bg = "white")
+  Cairo::Cairo(file = imgName, units= "in", dpi = dpi, width = w, height = h, type = format, bg = "white")
   print(plot)
   dev.off()
   
@@ -409,7 +409,7 @@ PlotLeaveOneOut <- function(mSetObj = NA, exposure, imgName, format = "png", dpi
   mSetObj$imgSet$current.img <- imgName
   
   plot <- .mr_looPlot(mr.res_loo, exposure)
-  Cairo::Cairo(file = imgName, unit = "in", dpi = dpi, width = w, height = h, type = format, bg = "white")
+  Cairo::Cairo(file = imgName, units = "in", dpi = dpi, width = w, height = h, type = format, bg = "white")
   print(plot)
   dev.off()
   
@@ -473,7 +473,7 @@ PlotFunnel <- function(mSetObj = NA, exposure, imgName, format = "png", dpi = 72
   mSetObj$imgSet$current.img <- imgName
   
   plot <- .mr_funnelPlot(mr.res_single, exposure)
-  Cairo::Cairo(file = imgName, unit = "in", dpi = dpi, width = w, height = h, type = format, bg = "white")
+  Cairo::Cairo(file = imgName, units = "in", dpi = dpi, width = w, height = h, type = format, bg = "white")
   print(plot)
   dev.off()
   

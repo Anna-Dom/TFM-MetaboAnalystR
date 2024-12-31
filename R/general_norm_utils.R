@@ -363,7 +363,7 @@ PlotNormSummary <- function(mSetObj=NA, imgName, format="png", dpi=72, width=NA)
   
   proc.data <- qs::qread("data_proc.qs");
 
-  Cairo::Cairo(file = imgName, unit="in", dpi=dpi, width=w, height=h, type=format, bg="white");
+  Cairo::Cairo(file = imgName, units="in", dpi=dpi, width=w, height=h, type=format, bg="white");
   layout(matrix(c(1,2,2,2,3,4,4,4), 4, 2, byrow = FALSE))
   
   # since there may be too many compounds, only plot a subsets (50) in box plot

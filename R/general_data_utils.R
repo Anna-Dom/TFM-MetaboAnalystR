@@ -915,7 +915,7 @@ PlotCmpdSummary <- function(mSetObj=NA, cmpdNm, meta="NA", meta2="NA",count=0, f
     mSetObj$dataSet$time.fac <- sel.meta.df[,which(tolower(colnames(sel.meta.df)) == "time")]
     .set.mSet(mSetObj);
 
-    Cairo::Cairo(file = imgName, unit="in", dpi=dpi, width=8, height= 6, type=format, bg="white");
+    Cairo::Cairo(file = imgName, units="in", dpi=dpi, width=8, height= 6, type=format, bg="white");
     plotProfile(mSetObj, cmpdNm);
     dev.off();
     
@@ -950,7 +950,7 @@ PlotCmpdSummary <- function(mSetObj=NA, cmpdNm, meta="NA", meta2="NA",count=0, f
     if(cls.type == "cont"){
         h <- h +1;
     }
-    Cairo::Cairo(file = imgName, unit="in", dpi=dpi, width=w, height=h, type=format, bg="white");
+    Cairo::Cairo(file = imgName, units="in", dpi=dpi, width=w, height=h, type=format, bg="white");
     
     col <- unique(GetColorSchema(in.fac));
     
@@ -1232,10 +1232,10 @@ GetNMDRStudy <- function(mSetObj=NA, StudyID){
 #' some logic is applied to not run certain commands to be known to have run beforehand
 #' such as initobject, reads and unzips; as well as others that will be ran after 
 #' like savetransformdata
-#'@usage RunConfigAnalysis(command)
-#'@param RunConfigAnalysis Command in a string form to be ran
+#'@usage RunRHistoryAnalysis(command)
+#'@param RunRHistoryAnalysis Command in a string form to be ran
 #'@export
-RunConfigAnalysis <- function(command){
+RunRHistoryAnalysis <- function(command){
 
   # check if it's a Read.PeakList command
   # if we are in a read statement
@@ -1249,7 +1249,11 @@ RunConfigAnalysis <- function(command){
     execute <- FALSE
   # if the line contain unzip or init, we don't execute
   } else if (grepl("Unzip|Init|SaveTransformedData", command)) {
-    execute <- FALSE
+    if (grepl("InitPower", command)) {
+      execute <- TRUE
+    } else {
+      execute <- FALSE
+    }
   } else {
     execute <- TRUE
   }
