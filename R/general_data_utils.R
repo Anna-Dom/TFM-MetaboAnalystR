@@ -683,7 +683,7 @@ Read.RHistoryFile <- function(filePath){
   found_dataformat <- "none"
   dataType <- "none"
   analType <- "none"
-  dataFormat <- "none"
+  dataFormat <- FALSE
 
   # Don't know the pattern for the line where we need to find the data formats, so
   # we need to loop through the file
