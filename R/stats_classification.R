@@ -227,12 +227,12 @@ PlotRF.Outlier <- function(mSetObj=NA, imgName, format="png", dpi=72, width=NA){
 #'License: GNU GPL (>= 2)
 #'@export
 #'
-RSVM.Anal <- function(mSetObj=NA, cvType){
+RSVM.Anal <- function(mSetObj=NA, cvType, tsize = 0.6, CVnum=0){
   
   mSetObj <- .get.mSet(mSetObj);
   
   ladder = CreateLadder(ncol(mSetObj$dataSet$norm));
-  svm.out <- RSVM(mSetObj$dataSet$norm, mSetObj$dataSet$cls, ladder, CVtype=cvType);
+  svm.out <- RSVM(mSetObj$dataSet$norm, mSetObj$dataSet$cls, ladder, CVtype=cvType, tsize=tsize, CVnum=0);
   
   # calculate important features
   ERInd <- max(which(svm.out$Error == min(svm.out$Error)))
@@ -407,13 +407,15 @@ CreateLadder <- function(Ntotal, Nmin=5){
 #'McGill University, Canada
 #'License: GNU GPL (>= 2)
 
-RSVM <- function(x, y, ladder, CVtype, CVnum=0){
+RSVM <- function(x, y, ladder, CVtype, CVnum=0, tsize=0.6){
   ## check if y is binary response
   Ytype <- names(table(y))
   if(length(Ytype) != 2){
     print("ERROR!! RSVM can only deal with 2-class problem")
     return(0)
   }
+
+  print(CVtype)
   
   ## class mean
   md <- colMeans(x[which(y==Ytype[1]),]) - colMeans(x[which(y==Ytype[2]),]);
@@ -438,8 +440,34 @@ RSVM <- function(x, y, ladder, CVtype, CVnum=0){
   SampInd <- seq(1, nSample)
   
   if(CVtype == "LOO"){
-    CVnum <- nSample
-  }else{
+    if (CVnum == 0){
+      CVnum <- nSample
+    }
+  } else if (CVtype == "carlo") {
+
+    if (CVnum == 0){
+      CVnum <- nSample
+    }
+
+    if (tsize <= 0) {
+      print("ERROR!! The size of the training dataset has to be bigger than 0")
+      return(0)
+    } else if (tsize < 1) {
+      training.size <- ceiling(length(SampInd)*tsize)
+      validation.size <- length(SampInd) - training.size
+    } else if (tsize == 1 || tsize == length(SampInd)) {
+       training.size <- length(SampInd)
+       validation.size <- length(SampInd)
+    } else {
+      if(tsize >= length(class_vector)) {
+        print("montecarlo: The size of the training dataset can't be bigger than the maximum length of the dataset.")
+        return(0)
+      } else {
+        training.size <- tsize
+        validation.size <- length(SampInd) - training.size
+      }
+    }
+  } else{
     if(CVnum == 0 ){
       CVnum <- nSample
     }
@@ -459,7 +487,15 @@ RSVM <- function(x, y, ladder, CVtype, CVnum=0){
     if(CVtype == "LOO"){
       TestInd <- i
       TrainInd <- SampInd[ -TestInd]
-    }else{
+    } else if (CVtype == "carlo"){
+      if(training.size == length(SampInd)) {
+        TestInd <- 1:training.size
+        TrainInd <- 1:validation.size
+      } else {
+        TestInd <- sort(sample(length(SampInd), training.size, replace = F))
+        TrainInd <- which(!((1:length(SampInd)) %in% TestInd))
+      }
+    } else{
       if(CVtype == "bootstrape"){
         TrainInd <- sample(SampInd, nSample, replace=T);
         TestInd <- SampInd[ which(!(SampInd %in% TrainInd ))];
