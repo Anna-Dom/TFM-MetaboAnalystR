@@ -395,8 +395,8 @@ CreateLadder <- function(Ntotal, Nmin=5){
 #'@param x Row matrix of data
 #'@param y Class label: 1 / -1 for 2 classes
 #'@param ladder Input the ladder
-#'@param CVtype Integer (N fold CV), "LOO" leave-one-out CV, "bootstrape" bootstrape CV
-#'@param CVnum Number of CVs, LOO: defined as sample size, Nfold and bootstrape:  user defined, default as sample size
+#'@param CVtype Integer (N fold CV), "LOO" leave-one-out CV, "bootstrape" bootstrape CV, "carlo" monte carlo CV
+#'@param CVnum Number of CVs, LOO: defined as sample size, Nfold, carlo and bootstrape:  user defined, default as sample size
 #'outputs a named list
 #'Error: a vector of CV error on each level
 #'SelFreq: a matrix for the frequency of each gene being selected in each level
@@ -426,18 +426,20 @@ RSVM <- function(x, y, ladder, CVtype, CVnum=0, tsize=0.6){
   y <- yy
   
   ## check ladder
+  # checks none of the steps are equal
   if(min(diff(ladder)) >= 0){
     print("ERROR!! ladder must be monotonously decreasing")
     return(0);
   }
   
+  # checks the ladder has the first step with all the features
   if(ladder[1] != ncol(x) ){
     ladder <- c(ncol(x), ladder)
   }
   
   nSample <- nrow(x)
   nGene   <- ncol(x)
-  SampInd <- seq(1, nSample)
+  SampInd <- seq(1, nSample) # sample indexes
   
   if(CVtype == "LOO"){
     if (CVnum == 0){
@@ -455,12 +457,9 @@ RSVM <- function(x, y, ladder, CVtype, CVnum=0, tsize=0.6){
     } else if (tsize < 1) {
       training.size <- ceiling(length(SampInd)*tsize)
       validation.size <- length(SampInd) - training.size
-    } else if (tsize == 1 || tsize == length(SampInd)) {
-       training.size <- length(SampInd)
-       validation.size <- length(SampInd)
     } else {
-      if(tsize >= length(class_vector)) {
-        print("montecarlo: The size of the training dataset can't be bigger than the maximum length of the dataset.")
+      if(tsize >= 1) {
+        print("montecarlo: The size of the training dataset can't be bigger than 1.")
         return(0)
       } else {
         training.size <- tsize
@@ -488,13 +487,8 @@ RSVM <- function(x, y, ladder, CVtype, CVnum=0, tsize=0.6){
       TestInd <- i
       TrainInd <- SampInd[ -TestInd]
     } else if (CVtype == "carlo"){
-      if(training.size == length(SampInd)) {
-        TestInd <- 1:training.size
-        TrainInd <- 1:validation.size
-      } else {
-        TestInd <- sort(sample(length(SampInd), training.size, replace = F))
-        TrainInd <- which(!((1:length(SampInd)) %in% TestInd))
-      }
+      TestInd <- sort(sample(length(SampInd), training.size, replace = F))
+      TrainInd <- which(!((1:length(SampInd)) %in% TestInd))
     } else{
       if(CVtype == "bootstrape"){
         TrainInd <- sample(SampInd, nSample, replace=T);
