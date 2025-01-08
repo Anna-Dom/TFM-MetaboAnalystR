@@ -6,18 +6,14 @@
 
 ## Description 
 
-MetaboAnalystR 4.0 contains the R functions and libraries underlying the popular MetaboAnalyst web server, including metabolomic data analysis, visualization, and functional interpretation. The package is synchronized with the MetaboAnalyst web server. After installing and loading the package, users will be able to reproduce the same results from their local computers using the corresponding R command history downloaded from MetaboAnalyst web site, thereby achieving maximum flexibility and reproducibility. 
+This repository has been forked from [https://github.com/xia-lab/MetaboAnalystR](MetaboAnalystR), it contains the R functions and libraries underlying the MetaboAnalyst web server, including metabolomic data analysis, visualization, and functional interpretation. After installing and loading the package, users will be able to reproduce the same results from their local computers using the corresponding R command history downloaded from MetaboAnalyst web site, thereby achieving maximum flexibility and reproducibility. 
 
-#### If you prefer using the web-based platform in a local environment, we provide long-term stable (LTS) release of [MetaboAnalyst-Pro](https://www.xialab.ca/pro/protools.xhtml) with Enterprise Solution for local installation. Please [contact us](https://www.xialab.ca/pro/contact.xhtml).
+The modifications in this repository were made in the context of a final master's projects, that also produced ()[this] repository for running the MetaboAnalyst 5.0 web application locally. Both repositories work together to:
 
-The version 4.0 aims to address three key challenges facing global metabolomics. By leveraging the best practices established by the community, MetaboAnalyst R 4.0 offers three key features: 
-1) an auto-optimized feature detection and quantification module for LC-MS1 spectra processing;
-2) a streamlined MS/MS spectra deconvolution and compound annotation module for both data-dependent acquisition (DDA) or data-independent acquisition (DIA); 
-3) a sensitive and debiased functional interpretation module for functional analysis directly from LC-MS and MS/MS results. 
+- Add a module to re-use analaysis from R scripts produced from MetaboAnalyst
+- Add Monte Carlo as a cross validation method in R-SVM analysis
 
-MetaboAnalystR 4.0 comes with a large collection of knowledgebases (~500,000 entries of metabolite sets) and spectra databases (~1.5 million MS2 spectra) to support local large-scale processing or using our API service. 
- 
-Our comprehensive benchmark studies show that MetaboAnalystR 4.0 can significantly improve the quantification accuracy and identification coverage of the metabolome. Serial dilutions demonstrate that MetaboAnalystR 4.0 can accurately detect and identify > 10% more high-quality MS and MS/MS features. For both DDA and DIA datasets, MetaboAnalystR 4.0 can increase the true positive rate of chemical identification by > 40% without increasing false identifications. The increased coverage and accuracy enable more accurate biological insights. In conclusion, MetaboAnalystR 4.0 provides an efficient pipeline that bridges LC-MS/MS data processing to biological insights in the open-source R environment.
+This repository can be used independently by following the instructions down below. 
 
 ## Getting Started
 
@@ -106,16 +102,6 @@ The * must be replaced by what is actually downloaded and built.
 git clone https://github.com/xia-lab/MetaboAnalystR.git
 R CMD build MetaboAnalystR
 R CMD INSTALL MetaboAnalystR_4.0.0.tar.gz
-
-```
-
-#### Option C) Manual download of MetaboAnalystR_3.0.3.tar.gz and install locally
-
-Manually download the .tar.gz file from [here](https://drive.google.com/file/d/1OHRUzXFDukWXEKxTLMF9X1fHRN06uFFu/view?usp=sharing). 
-
-```R
-cd ~/Downloads
-R CMD INSTALL MetaboAnalystR_3.0.3.tar.gz
 
 ```
 
